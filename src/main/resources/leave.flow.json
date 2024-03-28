@@ -1,0 +1,56 @@
+{
+  "name" : "leave",
+  "version": 1,
+  "desc": "发起请求，manage审核，通过后hr审核，hr通过后经过判条件判断，如果>3天则要老板审核，通过后则结束流程",
+  "tasks": {
+    "start" : {
+      "type": "auto",
+      "previous": "",
+      "next": "manage"
+    },
+    "end": {
+      "type": "auto",
+      "event": "org.sqsq.oa.service.impl.OaWorkflowServiceImpl"
+    },
+    "manage": {
+      "type": "action",
+      "user": "",
+      "role": "manage",
+      "action": {
+        "pass": "hr",
+        "reject" : "start"
+      }
+    },
+    "hr": {
+      "type": "action",
+      "user": "33333",
+      "role": "",
+      "action": {
+        "pass": "node1",
+        "reject" : "start"
+      }
+    },
+    "boss": {
+      "type": "action",
+      "user": "",
+      "role": "admin",
+      "action": {
+        "pass": "end",
+        "reject" : "start"
+      }
+    },
+    "node1": {
+      "type": "condition",
+      "condition": [
+        {
+          "where": "${day} > 3",
+          "node": "boss"
+        },
+        {
+          "where": "${day} <= 3",
+          "node": "end"
+        }
+      ]
+    }
+  }
+}
